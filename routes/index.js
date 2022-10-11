@@ -53,7 +53,7 @@ router.get('/print', async (req,res,next) => {
     res.writeHead(200, {
       'Content-Length': Buffer.byteLength(pdfData),
       'Content-Type': "application/pdf",
-      'Content-disposition': 'attachment;filename=test.pdf',
+      'Content-disposition': `attachment;filename=${req.query.hubid}.pdf`,
     })
         .end(pdfData)
   })
