@@ -45,7 +45,6 @@ router.get('/print', async (req,res,next) => {
   const barcode = router.get(`/barcode${req.query.hubid}`)
 
   doc.pipe(fs.createWriteStream('public/docs/ticket.pdf'));
-  doc.addPage();
 
   doc.on('data', buffers.push.bind(buffers));
 
