@@ -32,7 +32,7 @@ router.get('/barcode',async (req,res,next)=>{
 
 router.get('/print', async (req,res,next) => {
 
-  const doc = new PDFDocument({bufferPages: true});
+  const doc = new PDFDocument({autoFirstPage: false, bufferPages: true, layout: 'landscape', size: 'A5'});
 
   let buffers = [];
 
@@ -58,9 +58,19 @@ router.get('/print', async (req,res,next) => {
         .end(pdfData)
   })
 
+doc.addPage({
+  margins: { top: 0, left: 0, right: 0, bottom: 0},
+  layout: "landscape",
+  size: "A5"
+})
   var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
-  doc.text(`Season Pass ${req.query.hubid}`)
-  doc.image(img, 230, 220);
+  doc.image(img, (doc.page.width - 900 / 2));
+  doc.fontSize(25);
+  doc.text(`${req.query.passtype}`, 0, 300, { align: 'center'})
+  doc.fontSize(15);
+  doc.text(`${req.query.firstname} ${req.query.lastname}`, {align: 'center'})
+  doc.fontSize(10);
+  doc.text(`Expires: ${req.query.expirationdate}`, {align: 'center'})
   doc.end();
 
   // res.send({
