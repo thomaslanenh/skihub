@@ -65,7 +65,7 @@ doc.addPage({
 })
   var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
   doc.image(img, (doc.page.width - 900 / 2));
-  doc.fontSize(25);
+  doc.fontSize(20);
   doc.text(`${req.query.passtype}`, 0, 300, { align: 'center'})
   doc.fontSize(15);
   doc.text(`${req.query.firstname} ${req.query.lastname}`, {align: 'center'})
