@@ -11,24 +11,25 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-router.get('/barcode',async (req,res,next)=>{
-
-  const background = fs.readFileSync("public/images/bw.jpg");
-
-  const buffer = await new AwesomeQR({
-    text: req.query.hubid,
-    size: 300,
-    backgroundImage: background
-  }).draw();
-
-  fs.writeFileSync("qrcode.png", buffer);
-
-  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
-  res.set({'Content-Type': 'image/gif', 'Content-Length': img.length});
-  res.end(img);
-
-    }
-)
+// router.get('/barcode',async (req,res,next)=>{
+//
+//   const background = fs.readFileSync("public/images/bw.jpg");
+//
+//   const buffer = await new AwesomeQR({
+//     text: req.query.hubid,
+//     size: 300,
+//     backgroundImage: background
+//   }).draw();
+//
+//   await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
+//
+//   var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+//
+//   res.set({'Content-Type': 'image/gif', 'Content-Length': img.length});
+//   res.end(img);
+//
+//     }
+// )
 
 router.get('/print', async (req,res,next) => {
 
@@ -45,13 +46,20 @@ router.get('/print', async (req,res,next) => {
 
   let buffers = [];
 
-  var config = {
-    method: 'get',
-    url: '/barcode?hubid=2525225',
-    headers: { }
-  };
 
-  const barcode = router.get(`/barcode${req.query.hubid}`)
+
+  const background = fs.readFileSync("public/images/bw.jpg");
+
+  const buffer = await new AwesomeQR({
+    text: req.query.hubid,
+    size: 300,
+    backgroundImage: background
+  }).draw();
+
+  await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
+
+  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+
 
   doc.pipe(fs.createWriteStream('public/docs/ticket.pdf'));
 
@@ -72,7 +80,7 @@ doc.addPage({
   layout: "landscape",
   size: "A5"
 })
-  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+  var img = Buffer.from(fs.readFileSync(`qrcode${req.query.hubid}.png`), 'base64');
   doc.image(img, (doc.page.width - 900 / 2));
   doc.fontSize(20);
   doc.text(`${req.query.passtype}`, 0, 300, { align: 'center'})
