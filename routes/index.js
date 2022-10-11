@@ -34,6 +34,15 @@ router.get('/print', async (req,res,next) => {
 
   const doc = new PDFDocument({autoFirstPage: false, bufferPages: true, layout: 'landscape', size: 'A5'});
 
+  const datestamp = parseInt(req.query.expirationdate);
+  var date = new Date(datestamp);
+  var year = date.getFullYear();
+  var month = date.getMonth() + 1;
+  var day = date.getDate() + 1;
+
+  console.log(date)
+
+
   let buffers = [];
 
   var config = {
@@ -70,7 +79,7 @@ doc.addPage({
   doc.fontSize(15);
   doc.text(`${req.query.firstname} ${req.query.lastname}`, {align: 'center'})
   doc.fontSize(10);
-  doc.text(`Expires: ${req.query.expirationdate}`, {align: 'center'})
+  doc.text(`Expires: ${month}/${day}/${year}`, {align: 'center'})
   doc.end();
 
   // res.send({
