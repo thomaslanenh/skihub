@@ -5,6 +5,7 @@ const fs = require("fs");
 const PDFDocument = require('pdfkit');
 const stream = require('stream');
 const axios = require('axios');
+const open = require('open');
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -23,7 +24,7 @@ router.get('/barcode',async (req,res,next)=>{
 
   await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
 
-  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+  var img = Buffer.from(fs.readFileSync(`qrcode${req.query.hubid}.png`), 'base64');
 
   res.set({'Content-Type': 'image/gif', 'Content-Length': img.length});
   res.end(img);
@@ -58,15 +59,16 @@ router.get('/print', async (req,res,next) => {
 
   await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
 
-  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+  var img = Buffer.from(fs.readFileSync(`qrcode${req.query.hubid}.png`), 'base64');
 
 
   doc.pipe(fs.createWriteStream('public/docs/ticket.pdf'));
 
   doc.on('data', buffers.push.bind(buffers));
 
-  doc.on('end', () => {
+  doc.on('end', async () => {
     let pdfData = Buffer.concat(buffers);
+
     res.writeHead(200, {
       'Content-Length': Buffer.byteLength(pdfData),
       'Content-Type': "application/pdf",
