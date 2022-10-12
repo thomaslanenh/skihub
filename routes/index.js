@@ -11,25 +11,25 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'Express' });
 });
 
-// router.get('/barcode',async (req,res,next)=>{
-//
-//   const background = fs.readFileSync("public/images/bw.jpg");
-//
-//   const buffer = await new AwesomeQR({
-//     text: req.query.hubid,
-//     size: 300,
-//     backgroundImage: background
-//   }).draw();
-//
-//   await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
-//
-//   var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
-//
-//   res.set({'Content-Type': 'image/gif', 'Content-Length': img.length});
-//   res.end(img);
-//
-//     }
-// )
+router.get('/barcode',async (req,res,next)=>{
+
+  const background = fs.readFileSync("public/images/bw.jpg");
+
+  const buffer = await new AwesomeQR({
+    text: req.query.hubid,
+    size: 300,
+    backgroundImage: background
+  }).draw();
+
+  await fs.writeFileSync(`qrcode${req.query.hubid}.png`, buffer);
+
+  var img = Buffer.from(fs.readFileSync("qrcode.png"), 'base64');
+
+  res.set({'Content-Type': 'image/gif', 'Content-Length': img.length});
+  res.end(img);
+
+    }
+)
 
 router.get('/print', async (req,res,next) => {
 
